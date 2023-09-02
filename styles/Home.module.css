@@ -1,0 +1,25 @@
+.container {
+    min-height: 100vh;
+    padding: 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-container {
+    display: flex;
+    gap: 16px;
+}
+
+.image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.big-image {
+    width: 450px;
+    height: 450px;
+    object-fit: cover;
+}
