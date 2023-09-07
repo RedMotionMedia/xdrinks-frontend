@@ -18,10 +18,8 @@ jobs:
         port: ${{ secrets.PORT }}
         script_stop: true
         script: |
-          cd xdrinks-frontend/
+          cd development/xdrinks-frontend/
           git pull
-          unset NPM_CONFIG_PREFIX
-          nvm use 18.17.1
           npm install
           npm run build --if-present
           nohup npm run start -- --port 3100 &
