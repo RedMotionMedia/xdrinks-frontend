@@ -16,9 +16,10 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
+        script_stop: true
         script: |
           cd xdrinks-frontend/
           git pull
-          npm ci
+          npm install
           npm run build --if-present
           nohup npm run start -- --port 3100 &
