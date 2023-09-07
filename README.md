@@ -3,7 +3,7 @@
 ## Requirements
 
 - npm 10.0.0
-- Node js 16.18.0
+- Node.js v18.17.1
 
 ## Getting Started
 
