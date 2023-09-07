@@ -18,8 +18,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script_stop: true
         script: |
-          cd development/xdrinks-frontend/
-          git pull
-          npm install
-          npm run build --if-present
-          nohup npm run start -- --port 3100 &
+          cd development/deploy/
+          sh xdrinks-deploy.sh
