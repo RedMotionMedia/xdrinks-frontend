@@ -19,3 +19,6 @@ jobs:
         script: |
           cd xdrinks-frontend/
           git pull
+          npm ci
+          npm run build --if-present
+          nohup npm run start -- --port 3100 &
