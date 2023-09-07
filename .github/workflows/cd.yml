@@ -1,21 +1,26 @@
-name: Deploy
+name: Node Github CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
-      - name: Adding Known Hosts
-        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - name: Pull
-        timeout-minutes: 1
-        continue-on-error: true
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd /home/${{ secrets.SSH_USER }}/development/deploy/ && sh xdrinks-deploy.sh"
+    - name: Node Js
+      uses: actions/setup-node@v1
+       
+    - name: SSH and deploy node app
+      uses: appleboy/ssh-action@master        
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd development/deploy/
+          export NVM_DIR=~/.nvm
+          source ~/.nvm/nvm.sh 
+          sh xdrinks-deploy.sh
