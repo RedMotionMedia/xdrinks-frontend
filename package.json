@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "cypress": "cypress open",
+    "e2e": "start-server-and-test dev http://localhost:3000 \"cypress open --e2e\"",
+    "e2e:headless": "start-server-and-test dev http://localhost:3000 \"cypress run --e2e\"",
+    "component": "cypress open --component",
+    "component:headless": "cypress run --component"
   },
   "dependencies": {
     "framer-motion": "^6.5.1",
@@ -17,6 +21,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.15",
+    "cypress": "^13.1.0",
     "eslint": "8.20.0",
     "eslint-config-next": "^13.4.19",
     "postcss": "^8.4.29",

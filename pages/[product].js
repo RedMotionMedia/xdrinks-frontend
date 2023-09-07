@@ -2,7 +2,7 @@ import styles from "../styles/Home.module.css";
 import {useRouter} from "next/router";
 import {motion} from "framer-motion";
 import Link from "next/link";
-import Page from "../components/page";
+import Page from "./components/page";
 
 export default function Product() {
     const {

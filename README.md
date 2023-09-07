@@ -1,5 +1,10 @@
 # XDrinks-frontend
 
+## Requirements
+
+- npm 10.0.0
+- Node js 16.18.0
+
 ## Getting Started
 
 First, run the install command:
@@ -28,20 +33,16 @@ git pull
 Second, run the build command to generate a production optimized version:
 ```bash
 npm run build
-# or 
-yarn build
 ```
 Third, run the start command with or no output:
 ```bash
-nohup npm run start &
+sudo nohup npm run start &
 # or
-npm run start 
-# or
-yarn start
+sudo npm run start 
 ```
 If you want to start it on a different port try:
 ```bash
-nohup npm run start -- --port 3030 &
-# or
-npm run start -- --port 3030
+sudo nohup npm run start -- --port 3100 & # Without output
+# or 
+sudo npm run start -- --port 3100 # With output
 ```

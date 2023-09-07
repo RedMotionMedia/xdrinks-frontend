@@ -1,7 +1,7 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import {AnimatePresence, motion} from "framer-motion";
-import Page from "../components/page";
+import Page from "./components/page";
 
 export default function Home() {
 
