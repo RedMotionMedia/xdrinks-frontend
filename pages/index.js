@@ -22,7 +22,7 @@ export default function Home() {
                   },
                   animateState: {
                       opacity: 1,
-                      clipPath: "polygon(50% 0%, 50% 0%, 50% 100%, 50% 100%)",
+                      clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
                   }
               }}
               className="absolute flex flex-auto w-full h-full justify-center items-center bg-black z-20">

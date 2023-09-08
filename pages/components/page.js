@@ -1,9 +1,9 @@
-import Header from "./header";
+import Navbar from "./Navbar";
 
 export default function Page({children}) {
     return(
         <>
-            <Header />
+            <Navbar />
             <main>{children}</main>
         </>
     )
