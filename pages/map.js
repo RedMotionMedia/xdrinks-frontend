@@ -161,7 +161,6 @@ export default function Map() {
     }
 
     function openMapsApp(currentFeature) {
-        window.alert(navigator.platform)
         if ((navigator.platform.indexOf("iPhone") !== -1)
             || (navigator.platform.indexOf("MacIntel") !== -1)) {
 
