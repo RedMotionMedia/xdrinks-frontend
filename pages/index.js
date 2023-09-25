@@ -1,7 +1,6 @@
-import styles from "../styles/Home.module.css";
-import Link from "next/link";
 import {AnimatePresence, motion} from "framer-motion";
 import Page from "./components/page";
+
 
 export default function Home() {
 
@@ -72,21 +71,8 @@ export default function Home() {
               </motion.div>
           </motion.div>
           <Page>
-              <div className={styles.container}>
-                  <motion.h2 layoutId="header">My shop</motion.h2>
-                  <div className={styles["product-container"]}>
-                      {["shoe", "watch", "headphones"].map((product) => (
-                          <Link href={product} key={product}>
-                              <motion.img
-                                  layoutId={product}
-                                  className={styles.image}
-                                  src={product + ".jpg"}
-                                  animate={{ scale: 1 }}
-                                  whileHover={{ scale: 1.1 }}
-                              />
-                          </Link>
-                      ))}
-                  </div>
+              <div className="h-screen flex items-center justify-center pb-10">
+                  <h1 className="lg:text-8xl text-4xl">Home Page</h1>
               </div>
           </Page>
       </AnimatePresence>

@@ -6,6 +6,7 @@ const navLinks = [
     { title: "Home", href: "/" },
     { title: "About", href: "/about" },
     { title: "Contact", href: "/contact" },
+    { title: "Locations", href: "/map" },
 ];
 const Navbar = () => {
     const [open, setOpen] = useState(false);
@@ -49,8 +50,8 @@ const Navbar = () => {
     };
 
     return (
-        <header>
-            <div className="fixed w-full flex justify-between h-1/12 pr-12">
+        <div>
+            <div className="fixed w-full flex justify-between h-1/12 pr-4 pl-4 pt-4">
                 <div>
                     <Link href="/" className="flex justify-center items-center">
                         <svg
@@ -69,7 +70,7 @@ const Navbar = () => {
                     </Link>
                 </div>
                 <p
-                    className="lg:hidden flex justify-center items-center"
+                    className="cursor-pointer lg:hidden flex justify-center items-center pr-5"
                     onClick={toggleMenu}
                 >
                     Menu
@@ -84,6 +85,9 @@ const Navbar = () => {
                     <div className="pl-4 pr-8">
                         <Link href="/contact">Contact</Link>
                     </div>
+                    <div className="pl-4 pr-8">
+                        <Link href="/map">Locations</Link>
+                    </div>
                 </div>
             </div>
             <AnimatePresence>
@@ -93,9 +97,9 @@ const Navbar = () => {
                         initial="initial"
                         animate="animate"
                         exit="exit"
-                        className="fixed left-0 top-0 w-full h-screen origin-top bg-black text-white"
+                        className="fixed left-0 top-0 w-full h-screen origin-top bg-black text-white z-50"
                     >
-                        <div className="flex h-full flex-col pt-5 pl-4 pr-4">
+                        <div className="flex h-full flex-col pt-4 pl-4 pr-4">
                             <div className="flex justify-between">
                                 <div>
                                     <Link href="/" className="flex justify-center items-center">
@@ -144,7 +148,7 @@ const Navbar = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </header>
+        </div>
     );
 };
 
