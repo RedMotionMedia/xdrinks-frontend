@@ -100,20 +100,6 @@ export default function Map() {
             new mapboxgl.Marker(el, {offset: [0, -23]})
                 .setLngLat(marker.geometry.coordinates)
                 .addTo(map.current);
-
-            el.addEventListener('click', (e) => {
-                flyToStore(marker);
-                createPopUp(marker);
-                const activeItem = document.getElementsByClassName('active');
-                e.stopPropagation();
-                if (activeItem[0]) {
-                    activeItem[0].classList.remove('active');
-                }
-                const listing = document.getElementById(
-                    `listing-${marker.properties.id}`
-                );
-                listing.classList.add('active');
-            });
         }
     }
 
@@ -153,7 +139,7 @@ export default function Map() {
         console.log(currentFeature.geometry.coordinates);
         map.current.flyTo({
             center: currentFeature.geometry.coordinates,
-            zoom: 16
+            zoom: 18
         });
     }
 
@@ -163,17 +149,36 @@ export default function Map() {
         new mapboxgl.Popup({closeOnClick: false})
             .setLngLat(currentFeature.geometry.coordinates)
             .setHTML(
-                `<h3>${currentFeature.properties.name}</h3><h4>${currentFeature.properties.address}</h4>`
+                `<h3>${currentFeature.properties.name}</h3><h4>${currentFeature.properties.address}</h4><a href="#" class="mapAppLink">Show me the way!</a>`
             )
             .addTo(map.current);
+
+        const link = popUps[0].getElementsByClassName('mapAppLink');
+
+        link[0].addEventListener('click', function () {
+            openMapsApp(currentFeature);
+        });
     }
+
+    function openMapsApp(currentFeature) {
+        window.alert(navigator.platform)
+        if ((navigator.platform.indexOf("iPhone") !== -1)
+            || (navigator.platform.indexOf("MacIntel") !== -1)) {
+
+            window.open("http://maps.apple.com/?daddr=" + currentFeature.geometry.coordinates[1] + "," + currentFeature.geometry.coordinates[0]);       //Apple Maps --> https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/MapLinks/MapLinks.html
+        }
+        else {
+            window.open("https://www.google.com/maps/dir/?api=1&travelmode=driving&layer=traffic&destination=" + currentFeature.geometry.coordinates[1] + "," + currentFeature.geometry.coordinates[0]);
+        }
+    }
+
 
     return (
         <Page>
             <div className={styles.container}>
                 <main className={styles.main}>
                     <div className={styles.sidebar}>
-                        <div className='text-5xl uppercase'>
+                        <div className='text-5xl uppercase' onClick={openMapsApp}>
                             <p>Our locations</p>
                         </div>
                         <div id='listings' className='listings'></div>
