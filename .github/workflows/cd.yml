@@ -36,9 +36,9 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64  # Specify the platforms you need
-          tags: ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:latest
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
-            MAPBOX_KEY=$MAPBOX_KEY
+            MAPBOX_KEY=${{ env.MAPBOX_KEY }}
           file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
 
       - name: Image digest
