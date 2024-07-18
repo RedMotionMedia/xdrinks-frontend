@@ -30,13 +30,20 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Sanitize repo slug
+        uses: actions/github-script@v4
+        id: repo_slug
+        with:
+          result-encoding: string
+          script: return `ghcr.io/${github.repository.toLowerCase()}`
+
       - name: Build & push docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64  # Specify the platforms you need
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.repo_slug.outputs.result }}:latest
           file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
           build-args: |
             MAPBOX_KEY=${{ env.MAPBOX_KEY }}
@@ -53,7 +60,7 @@ jobs:
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             script: |
               docker container rm -f ${{ env.IMAGE_NAME }} 2> /dev/null || true
-              docker image rm ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest 2> /dev/null || true
+              docker image rm ${{ steps.repo_slug.outputs.result }}:latest 2> /dev/null || true
               echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-              docker pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+              docker pull ${{ steps.repo_slug.outputs.result }}:latest
+              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ${{ steps.repo_slug.outputs.result }}:latest
