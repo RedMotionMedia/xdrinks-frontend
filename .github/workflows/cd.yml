@@ -61,4 +61,6 @@ jobs:
               docker image rm ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest 2> /dev/null || true
               echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
               docker pull ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
-              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
+              docker run -d -p 3100:3000 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
+            # Explainaition for the last line:
+            # docker run -d -p [externerPort]:[internerPort] --name [imageName] ghcr.io/[repositoryOwner]/[repositoryName]:latest
