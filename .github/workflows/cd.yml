@@ -3,11 +3,11 @@ name: Deploy
 on:
   push:
     branches:
-      - main  # Adjust the branch name as needed
+      - main
 
 env:
-  IMAGE_NAME: XDrinks
-  MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
+  IMAGE_NAME: ${{ github.event.repository.name }}
+  MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}           # Add here environment variables first and then when reference it when you build the docker image
 
 jobs:
   build-and-push:
@@ -36,10 +36,11 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64  # Specify the platforms you need
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+          tags: ghcr.io/${{ github.repository }}:latest
+          file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
           build-args: |
             MAPBOX_KEY=${{ env.MAPBOX_KEY }}
-          file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
+          #Add here your environment Variables which you implemented above
 
       - name: Image digest
         run: echo ${{ steps.build-and-push.outputs.digest }}
@@ -52,7 +53,7 @@ jobs:
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             script: |
               docker container rm -f ${{ env.IMAGE_NAME }} 2> /dev/null || true
-              docker image rm ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest 2> /dev/null || true
+              docker image rm ghcr.io/${{ github.repository }}:latest 2> /dev/null || true
               echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-              docker pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
-              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+              docker pull ghcr.io/${{ github.repository }}:latest
+              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository }}:latest
