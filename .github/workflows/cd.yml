@@ -2,29 +2,57 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main  # Adjust the branch name as needed
+
+env:
+  IMAGE_NAME: XDrinks
+  MAPBOX_KEY: ${{ secrets.MAPBOX_KEY }}
 
 jobs:
-
-  deploy:
-    name: Deploy
+  build-and-push:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    continue-on-error: true
+
     steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script_stop: true
-        script: |
-          cd development/xdrinks-frontend/
-          git pull
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh 
-          npm ci
-          npm run build --if-present
-          kill -9 $(lsof -t -i:3100)
-          nohup npm run start -- --port 3100 &
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64  # Specify the platforms you need
+          tags: ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:latest
+          build-args: |
+            MAPBOX_KEY=$MAPBOX_KEY
+          file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
+
+      - name: Image digest
+        run: echo ${{ steps.build-and-push.outputs.digest }}
+
+      - uses: appleboy/ssh-action@v1.0.0
+        name: Pull image and start container
+        with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            script: |
+              docker container rm -f ${{ env.IMAGE_NAME }} 2> /dev/null || true
+              docker image rm ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest 2> /dev/null || true
+              echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+              docker pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+              docker run -d -p 3000:3100 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
