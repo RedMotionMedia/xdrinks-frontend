@@ -63,4 +63,4 @@ jobs:
               docker pull ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
               docker run -d -p 3100:3000 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
             # Explainaition for the last line:
-            # docker run -d -p [externerPort]:[internerPort] --name [imageName] ghcr.io/[repositoryOwner]/[repositoryName]:latest
+            # docker run -d -p [externalPort]:[internalPort] --name [imageName] ghcr.io/[repositoryOwner]/[repositoryName]:latest
