@@ -6,6 +6,9 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+ARG MAPBOX_KEY
+ENV MAPBOX_KEY=${MAPBOX_KEY}
+
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
@@ -19,6 +22,10 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+
+ARG MAPBOX_KEY
+ENV MAPBOX_KEY=${MAPBOX_KEY}
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -38,9 +45,9 @@ RUN \
 FROM base AS runner
 WORKDIR /app
 
-ARG MAPBOX_KEY
-ENV MAPBOX_KEY ${MAPBOX_KEY}
 ENV NODE_ENV production
+ARG MAPBOX_KEY
+ENV MAPBOX_KEY=${MAPBOX_KEY}
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
