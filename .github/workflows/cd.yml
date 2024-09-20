@@ -64,4 +64,4 @@ jobs:
           git config --local user.name "${{ github.repository_owner }}"
           git add deployment/xdrinks-deployment.yaml
           git commit -m "Update image tag to version ${{ env.VERSION }}"
-          git push origin HEAD:kubernetes
+          git push --force origin HEAD:kubernetes
