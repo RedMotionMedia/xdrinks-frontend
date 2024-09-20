@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - kubernetes
 
 env:
   IMAGE_NAME: ${{ github.event.repository.name }}
@@ -41,11 +42,22 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64  # Specify the platforms you need
-          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
+          tags: |
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ github.run_number }}  # Add running version number
           file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
           build-args: |
             MAPBOX_KEY=${{ env.MAPBOX_KEY }}
           #Add here your environment Variables which you implemented above
 
-      - name: Image digest
-        run: echo ${{ steps.build-and-push.outputs.digest }}
+      - name: Update Kubernetes manifest
+        run: |
+          sed -i 's|image: ghcr.io/${{ steps.lower-repo.outputs.repository }}:.*|image: ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ github.run_number }}|' deployment/xdrinks-deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "${{ secrets.GITHUB_USER_EMAIL }}"
+          git config --local user.name "${{ secrets.GITHUB_USER_NAME }}"
+          git add deployment/xdrinks-deployment.yaml
+          git commit -m "Update image tag to version ${{ github.run_number }}"
+          git push
