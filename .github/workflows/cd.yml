@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - kubernetes
 
 env:
   IMAGE_NAME: ${{ github.event.repository.name }}
@@ -65,4 +64,4 @@ jobs:
           git config --local user.name "${{ github.repository_owner }}"
           git add deployment/xdrinks-deployment.yaml
           git commit -m "Update image tag to version ${{ env.VERSION }}"
-          git push
+          git push origin HEAD:kubernetes
