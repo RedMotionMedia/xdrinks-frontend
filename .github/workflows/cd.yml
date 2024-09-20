@@ -35,32 +35,33 @@ jobs:
         run: |
           echo "repository=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
 
+      - name: Set version number
+        id: set-version
+        run: |
+          echo "VERSION=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+
       - name: Build & push docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64  # Specify the platforms you need
-          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
+          tags: |
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest,
+            ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ env.VERSION }}
           file: Dockerfile  # Adjust if your Dockerfile is not in the root directory
           build-args: |
             MAPBOX_KEY=${{ env.MAPBOX_KEY }}
           #Add here your environment Variables which you implemented above
 
-      - name: Image digest
-        run: echo ${{ steps.build-and-push.outputs.digest }}
+      - name: Update Kubernetes manifest
+        run: |
+          sed -i 's|image: ghcr.io/${{ steps.lower-repo.outputs.repository }}:.*|image: ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ env.VERSION }}|' deployment/xdrinks-deployment.yaml
 
-      - uses: appleboy/ssh-action@v1.0.0
-        name: Pull image and start container
-        with:
-            host: ${{ secrets.SSH_HOST }}
-            username: ${{ secrets.SSH_USER }}
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            script: |
-              docker container rm -f ${{ env.IMAGE_NAME }} 2> /dev/null || true
-              docker image rm ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest 2> /dev/null || true
-              echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-              docker pull ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
-              docker run -d -p 3100:3000 --name ${{ env.IMAGE_NAME }} ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest
-            # Explainaition for the last line:
-            # docker run -d -p [externalPort]:[internalPort] --name [imageName] ghcr.io/[repositoryOwner]/[repositoryName]:latest
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "${{ github.repository_owner }}@users.noreply.github.com"
+          git config --local user.name "${{ github.repository_owner }}"
+          git add deployment/xdrinks-deployment.yaml
+          git commit -m "Update image tag to version ${{ env.VERSION }}"
+          git push origin HEAD:kubernetes
