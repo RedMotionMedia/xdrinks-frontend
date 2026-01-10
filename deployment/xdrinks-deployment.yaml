@@ -56,7 +56,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: "xdrinks.example.com"
+    - host: "xdrinks.redmotionmedia.com"
       http:
         paths:
           - path: /
