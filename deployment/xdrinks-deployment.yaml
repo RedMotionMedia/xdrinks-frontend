@@ -51,13 +51,10 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: xdrinks
+  name: xdrinks-ingress
   namespace: default
-  labels:
-    app: routing-types
-    type: host-based
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
     - host: "xdrinks.example.com"
       http:
