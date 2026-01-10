@@ -16,7 +16,7 @@ spec:
         app: xdrinks
     spec:
       containers:
-        - image: ghcr.io/redmotionmedia/xdrinks-frontend:latest
+        - image: ghcr.io/redmotionmedia/xdrinks-frontend:37
           name: xdrinks
           ports:
             - name: http
